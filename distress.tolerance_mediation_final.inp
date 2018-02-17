@@ -1,0 +1,39 @@
+TITLE: AARDISS;
+DATA: FILE = "\distresstolerance2.dat";
+VARIABLE:
+NAMES ARE
+BAI
+BRS
+DTS;
+
+MISSING ARE ALL(999);
+
+! A series of regression models should be estimated. 
+! To test for mediation, one should estimate the 3 following regression equations:
+! 1) Regressing the mediator on the IV 
+! 2) Regressing the DV on the IV
+! 3) Regressing the DV on both the IV and on the mediator
+! Separate coefficients for each equation should be estimated and tested.
+
+USEVARIABLES = x m y;
+
+DEFINE:
+
+x=BRS; !Independent
+m=DTS; !Mediator
+y=BAI; !Dependent
+
+STANDARDIZE x m y;
+
+!ANALYSIS:
+!BOOTSTRAP = 1000;
+
+MODEL:
+m on x*(a);
+y on m*(b);
+y on x*(c);
+
+MODEL INDIRECT:
+y IND x;
+
+OUTPUT: SAMPSTAT; STANDARDIZED; CINTERVAL;
